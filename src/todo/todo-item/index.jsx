@@ -8,6 +8,7 @@ const TodoList = ({ list, id, deleteFunc, editFunc, setEditId, editId }) => {
         {editId == id ? (
           <input
             type="text"
+            className="border rounded-lg px-2"
             onChange={(e) => setInputValue(e.target.value)}
             value={inputValue}
           />

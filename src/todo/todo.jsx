@@ -6,32 +6,64 @@ const Todo = () => {
   const [data, setData] = useState([]);
   // edit
   const [editId, setEditId] = useState(null);
+  const [searchValue, setSearchValue] = useState("");
+  let localData = JSON.parse(localStorage.getItem("data")) || [];
 
   let addTodo = (e) => {
     e.preventDefault();
     setData((preD) => [...preD, { list, id: Date.now() }]);
+    localStorage.setItem(
+      "data",
+      JSON.stringify([...localData, { list, id: Date.now() }])
+    );
     setList("");
   };
 
   let deleteFunc = (id) => {
-    let newData = data.filter((value) => value.id !== id);
+    let newData = localData.filter((value) => value.id !== id);
     setData(newData);
+    localStorage.setItem("data", JSON.stringify(newData));
   };
   let editFunc = (id, promtValue) => {
-    data.filter((value) => {
+    localData.filter((value) => {
       if (value.id === id) {
-        let newData = data.map((value) =>
+        let newData = localData.map((value) =>
           value.id == id ? { ...value, list: promtValue } : value
         );
         setData(newData);
+        localStorage.setItem("data", JSON.stringify(newData));
+
         setEditId(value.id);
       }
     });
+  };
+  let search = (e) => {
+    e.preventDefault();
+    console.log(searchValue);
+    localData.filter((value) => {
+      if (value.list.includes(searchValue)) {
+      }
+    });
+
+    if ("") {
+    }
   };
 
   return (
     <div className="m-auto w-[90%] py-5 ">
       <h1>Your todo list </h1>
+
+      <form onSubmit={search} className="flex items-center gap-2 py-3">
+        <input
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
+          type="text"
+          className="border rounded-lg px-2 py-1 w-full "
+          placeholder="search your todo"
+        />
+
+        <button className="px-5 py-1.5">done</button>
+      </form>
       <form onSubmit={addTodo} className="flex items-center gap-2">
         <input
           value={list}
@@ -44,16 +76,18 @@ const Todo = () => {
         <button className="px-5 py-1.5">done</button>
       </form>
       <div className="py-4  flex flex-col gap-3">
-        {data.map((value) => (
-          <TodoList
-            key={value.id}
-            deleteFunc={deleteFunc}
-            {...value}
-            setEditId={setEditId}
-            editId={editId}
-            editFunc={editFunc}
-          />
-        ))}
+        {
+          localData.map((value) => (
+            <TodoList
+              key={value.id}
+              deleteFunc={deleteFunc}
+              {...value}
+              setEditId={setEditId}
+              editId={editId}
+              editFunc={editFunc}
+            />
+          ))
+        }
       </div>
     </div>
   );
