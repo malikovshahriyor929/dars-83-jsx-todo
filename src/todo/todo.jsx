@@ -4,6 +4,7 @@ import TodoList from "./todo-item";
 const Todo = () => {
   const [list, setList] = useState("");
   const [data, setData] = useState([]);
+  const [searchdata, setSearchData] = useState([]);
   // edit
   const [editId, setEditId] = useState(null);
   const [searchValue, setSearchValue] = useState("");
@@ -39,15 +40,14 @@ const Todo = () => {
   };
   let search = (e) => {
     e.preventDefault();
-    console.log(searchValue);
-    localData.filter((value) => {
-      if (value.list.includes(searchValue)) {
-      }
-    });
+    // console.log(searchValue);
+    let newdata = localData.filter((value) => value.list.includes(searchValue));
+    setSearchData(newdata);
 
     if ("") {
     }
   };
+  // console.log(value);
 
   return (
     <div className="m-auto w-[90%] py-5 ">
@@ -76,18 +76,16 @@ const Todo = () => {
         <button className="px-5 py-1.5">done</button>
       </form>
       <div className="py-4  flex flex-col gap-3">
-        {
-          localData.map((value) => (
-            <TodoList
-              key={value.id}
-              deleteFunc={deleteFunc}
-              {...value}
-              setEditId={setEditId}
-              editId={editId}
-              editFunc={editFunc}
-            />
-          ))
-        }
+        {(searchValue ? searchdata : localData).map((value) => (
+          <TodoList
+            key={value.id}
+            deleteFunc={deleteFunc}
+            {...value}
+            setEditId={setEditId}
+            editId={editId}
+            editFunc={editFunc}
+          />
+        ))}
       </div>
     </div>
   );
