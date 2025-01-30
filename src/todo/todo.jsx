@@ -1,24 +1,30 @@
-import { useState } from "react";
-import TodoList from "./todo-item";
+import { useState, useEffect } from "react";
 
+import { TodoList } from "./todo-item";
+import Progress from "./progress";
 const Todo = () => {
   const [list, setList] = useState("");
   const [data, setData] = useState([]);
   const [searchdata, setSearchData] = useState([]);
-  // edit
+  const [check, setCheck] = useState(false);
   const [editId, setEditId] = useState(null);
   const [searchValue, setSearchValue] = useState("");
+
   let localData = JSON.parse(localStorage.getItem("data")) || [];
 
   let addTodo = (e) => {
     e.preventDefault();
-    setData((preD) => [...preD, { list, id: Date.now() }]);
+    setData((preD) => [...preD, { list, id: Date.now(), isActive: false }]);
     localStorage.setItem(
       "data",
-      JSON.stringify([...localData, { list, id: Date.now() }])
+      JSON.stringify([...localData, { list, id: Date.now(), isActive: false }])
     );
     setList("");
   };
+  // let localCount = JSON.parse(localStorage.getItem("count")) || 0;
+  // let localper = JSON.parse(localStorage.getItem("persent")) || 0;
+  // per = Math.round((localCount / localData.length) * 100);
+  // localStorage.setItem("persent", JSON.stringify(per));
 
   let deleteFunc = (id) => {
     let newData = localData.filter((value) => value.id !== id);
@@ -40,14 +46,21 @@ const Todo = () => {
   };
   let search = (e) => {
     e.preventDefault();
-    // console.log(searchValue);
-    let newdata = localData.filter((value) => value.list.includes(searchValue));
-    setSearchData(newdata);
 
-    if ("") {
-    }
+    let newdata = localData.filter((value) => value.list.includes(searchValue));
+
+    setSearchData(newdata);
   };
-  // console.log(value);
+  let progress =
+    (data.filter((value) => value.isActive).length / data.length) * 100;
+
+  const checkedList = (id) => {
+    let newData = data.map((value) =>
+      value.id === id ? { ...value, isActive: !value.isActive } : value
+    );
+    setData(newData);
+    localStorage.setItem("data", JSON.stringify(newData));
+  };
 
   return (
     <div className="m-auto w-[90%] py-5 ">
@@ -84,9 +97,12 @@ const Todo = () => {
             setEditId={setEditId}
             editId={editId}
             editFunc={editFunc}
+            checkedList={checkedList}
           />
         ))}
       </div>
+
+      {localData.lenght !== 0 && <Progress progress={progress} />}
     </div>
   );
 };
